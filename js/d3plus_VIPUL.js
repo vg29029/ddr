@@ -21068,7 +21068,13 @@ module.exports = function(params) {
     data_container.selectAll(".d3plus_tooltip_data_name")
       .style("width",function(){
         var w = parseFloat(d3.select(this.parentNode).style("width"),10)
-        return (w-val_width-30)+"px"
+        /**********************************************************/
+        // Edited by Vipul
+        /**********************************************************/
+        // return (w-val_width-30)+"px"
+        return 'inherit';
+        /**********************************************************/
+
       })
 
     data_container.selectAll(".d3plus_tooltip_data_value")
@@ -27056,8 +27062,25 @@ module.exports = function(vars, id, length, extras, children, depth) {
         var c = vars.data.viz.filter(function(d){
           return d[vars.id.value] === conn[vars.id.value]
         })
+        /**********************************************************/
+        // Modified by Vipul
+        /**********************************************************/
+        var e = vars.edges.value.filter(function(d){
+          return d.target[vars.id.value] === id[vars.id.value] && d.source[vars.id.value] === conn[vars.id.value]
+        })[0] || {};
+
+        if (!e.pubmed){
+          e = vars.edges.value.filter(function(d){
+            return d.source[vars.id.value] === id[vars.id.value] && d.target[vars.id.value] === conn[vars.id.value]
+          })[0] || {};          
+        }
 
         var c = c.length ? c[0] : conn
+        // console.log("source", id[vars.id.value], e);
+        // console.log("target", conn[vars.id.value], c);
+
+        var pubmed = e.pubmed || '';
+        /**********************************************************/
 
         var name = fetchText(vars,c)[0],
             color = fetchColor(vars,c),
@@ -27086,7 +27109,7 @@ module.exports = function(vars, id, length, extras, children, depth) {
           "group": vars.format.value(vars.format.locale.value.ui.primary),
           "highlight": false,
           "link": nodeClick,
-          "name": "<div id='d3plustooltipfocuslink_"+c[vars.id.value]+"' class='d3plus_tooltip_focus_link' style='position:relative;padding-left:"+size*1.5+"px;'>"+node+name+"</div>"
+          "name": "<div id='d3plustooltipfocuslink_"+c[vars.id.value]+"' class='d3plus_tooltip_focus_link' style='position:relative;padding-left:"+size*1.5+"px;'>"+node + name + ' ' + pubmed+"</div>"
         })
 
       })
